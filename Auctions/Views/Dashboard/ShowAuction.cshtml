@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+@model Auctions.Models.AuctionEvent
+@using Auctions.Models;
+
+<div class="container">
+    <div class="row">
+        <div class="nav">
+            <h1 class="col-sm-6">@Model.product_name 
+                <span class="nav-creator" style="font-size: 14pt;margin-left: 40px;"> Created by : @Model.user.first_name</span></h1>
+            <h1 class="col-sm-6 text-right" style="font-size: 13pt; vertical-align: bottom;">
+                <a href="/dashboard">Dashboard | </a> 
+                <a href="/logout">Logout</a>
+            </h1>
+        </div>
+        <br>
+        <div class="col-sm-9">
+            @{
+                if( ((@Model.end_date - DateTime.Now).Days) < 1)
+                {
+                    <h4>Time Remaining : &nbsp;  <span class="font-light" style="font-weight: 300;font-size: 12pt;text-align: justify;"> 
+                    @((@Model.end_date - DateTime.Now).Hours + 24) hours </span></h4>
+                }else{
+                    <h4>Time Remaining : &nbsp;  <span class="font-light" style="font-weight: 300;font-size: 12pt;text-align: justify;"> 
+                    @((@Model.end_date - DateTime.Now).Days + 1) days </span></h4>
+                }
+            }
+            <br>
+            <h4>Description : &nbsp; <span style="font-weight: 300;font-size: 12pt;text-align: justify;">@Model.description</span></h4>  
+            <hr>
+            <div class="col-sm-4 bid-left" style="margin-left: -13px;margin-right: 20px;">
+                <h4>Current Highest Bid : </h4>
+                <h3 class="highestbid" style="margin-top: 30px;margin-left: 53px;margin-bottom: 30px;">$ @Model.highest_bid</h3>
+                @{
+                    if(@Model.starting_bid == @Model.highest_bid)
+                    {
+                        <p>No new bidder yet. The current highest bid is the starting bid.</p>
+                    }else{
+                        <p class="bidder" style="margin-left: 3em;">- By @ViewBag.bidInfo</p>
+                    }
+                }
+            </div>
+            <div class="col-sm-7">
+                <h4>Your Bid </h4>
+                <form method="post" asp-action="ProcessBid" asp-controller="Dashboard">
+                    @{
+                        if (TempData["Error"] != null)
+                        {
+                            <ul class="tempdata" style="color: red;">
+                                <li>@TempData["Error"]</li>
+                            </ul>
+                        }
+                    }
+                    <div class="form-group col-md-6">
+                        <input class="form-control" type="number" id="amt" name="amt"> 
+                    </div>
+                    <input type="submit" value="Submit" class="btn btn-info col-md-2" style="display: inline-block; margin-left: 20px;">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
